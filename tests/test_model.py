@@ -8,20 +8,19 @@ from spacex_falcon.model import MODEL_FEATURES, prediction_record, train_tempora
 def test_temporal_evaluation_and_final_model(launch_data):
     model, report = train_temporal_model(launch_data)
 
-    assert report.train_samples == 32
-    assert report.test_samples == 8
-    assert report.train_max_flight < report.test_min_flight
-    assert 0 <= report.baseline_accuracy <= 1
+    assert report.folds == 5
+    assert report.evaluation_samples == 50
     assert 0 <= report.accuracy <= 1
+    assert 0 <= report.brier <= 1
     assert hasattr(model, "predict_proba")
 
 
 def test_prediction_record_is_accepted_by_model(launch_data):
     model, _report = train_temporal_model(launch_data)
     row = prediction_record(
-        launch_data,
-        flight_number=41,
+        flight_number=91,
         payload_mass=2_000,
+        booster_prior_flights=2,
         orbit="LEO",
         launch_site="Site A",
         grid_fins=True,

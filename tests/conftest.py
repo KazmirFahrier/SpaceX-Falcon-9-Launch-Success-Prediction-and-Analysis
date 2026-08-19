@@ -4,10 +4,10 @@ import pandas as pd
 import pytest
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def launch_data() -> pd.DataFrame:
     rows = []
-    for index in range(40):
+    for index in range(90):
         rows.append(
             {
                 "FlightNumber": index + 1,
@@ -31,3 +31,17 @@ def launch_data() -> pd.DataFrame:
             }
         )
     return pd.DataFrame(rows)
+
+
+@pytest.fixture(scope="session")
+def experiment_results(launch_data):
+    from spacex_falcon.evaluation import run_experiments
+
+    return run_experiments(launch_data)
+
+
+@pytest.fixture(scope="session")
+def dashboard_app(launch_data, experiment_results):
+    from spacex_falcon.dashboard import create_app
+
+    return create_app(launch_data, experiment_results)

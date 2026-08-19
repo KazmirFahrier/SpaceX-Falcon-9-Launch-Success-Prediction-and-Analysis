@@ -23,8 +23,14 @@ jobs:
       - name: Install project
         run: python -m pip install --upgrade pip && python -m pip install -e ".[test]"
       - name: Lint
-        run: ruff check app.py src tests
+        run: ruff check app.py src scripts tests
       - name: Format
-        run: ruff format --check app.py src tests
+        run: ruff format --check app.py src scripts tests
       - name: Test
         run: pytest
+      - name: Regenerate report artifacts
+        if: matrix.python-version == '3.12'
+        run: python scripts/generate_report.py
+      - name: Validate regenerated reports
+        if: matrix.python-version == '3.12'
+        run: pytest tests/test_artifacts.py
