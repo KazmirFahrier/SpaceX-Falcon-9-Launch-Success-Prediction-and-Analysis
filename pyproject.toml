@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "spacex-falcon-landing"
+version = "1.0.0"
+description = "Reproducible Falcon 9 first stage landing analysis and dashboard"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "dash>=2.18,<5",
+  "pandas>=2.2,<4",
+  "plotly>=5.24,<7",
+  "requests>=2.32,<3",
+  "scikit-learn>=1.4,<2",
+]
+
+[project.optional-dependencies]
+test = [
+  "pytest>=8,<10",
+  "ruff>=0.9,<1",
+]
+deploy = [
+  "gunicorn>=23,<24",
+]
+
+[project.scripts]
+spacex-dashboard = "spacex_falcon.dashboard:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
