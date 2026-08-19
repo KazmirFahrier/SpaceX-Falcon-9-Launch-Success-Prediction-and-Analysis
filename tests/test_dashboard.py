@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from spacex_falcon.dashboard import create_app
-
 
 def _component_ids(component):
     found = set()
@@ -19,20 +17,20 @@ def _component_ids(component):
     return found
 
 
-def test_dashboard_builds_with_analysis_and_prediction_controls(launch_data):
-    app = create_app(launch_data)
-    ids = _component_ids(app.layout)
+def test_dashboard_builds_with_analysis_and_prediction_controls(dashboard_app):
+    ids = _component_ids(dashboard_app.layout)
 
-    assert app.server is not None
-    assert "success-pie-chart" in ids
+    assert dashboard_app.server is not None
     assert "success-payload-scatter-chart" in ids
+    assert "model-results-table" in ids
+    assert "prediction-errors-table" in ids
+    assert "prediction-prior-flights" in ids
     assert "prediction-button" in ids
     assert "prediction-result" in ids
 
 
-def test_prediction_callback_returns_probability(launch_data):
-    app = create_app(launch_data)
-    client = app.server.test_client()
+def test_prediction_callback_returns_probability(dashboard_app):
+    client = dashboard_app.server.test_client()
     response = client.post(
         "/_dash-update-component",
         json={
@@ -42,6 +40,7 @@ def test_prediction_callback_returns_probability(launch_data):
             "state": [
                 {"id": "prediction-flight", "property": "value", "value": 41},
                 {"id": "prediction-payload", "property": "value", "value": 2_000},
+                {"id": "prediction-prior-flights", "property": "value", "value": 2},
                 {"id": "prediction-site", "property": "value", "value": "Site A"},
                 {"id": "prediction-orbit", "property": "value", "value": "LEO"},
                 {
