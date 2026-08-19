@@ -28,6 +28,9 @@ jobs:
         run: ruff format --check app.py src scripts tests
       - name: Test
         run: pytest
-      - name: Verify generated reports
+      - name: Regenerate report artifacts
         if: matrix.python-version == '3.12'
-        run: python scripts/generate_report.py && git diff --exit-code -- reports
+        run: python scripts/generate_report.py
+      - name: Validate regenerated reports
+        if: matrix.python-version == '3.12'
+        run: pytest tests/test_artifacts.py
